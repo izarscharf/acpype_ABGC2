@@ -192,6 +192,7 @@ There are several ways of obtaining `acpype`:
 
 - By installing via `conda` or using via `docker` you get `AmberTools v.21.11` and `OpenBabel v3.1.1`. Our `AmberTools v.21.11` is a stripped version from the original containing only the necessary binaries and libraries and comes with the `charmmgen` binary from `AmberTools17` in order to generate CHARMM topologies.
 - By installing via `pip` you get `AmberTools` (as described above) embedded. However, the included binaries may not work in your system (library dependencies issues) and with only provide binaries for Linux (Ubuntu20) and macOS (Intel).
+- The bundled `AmberTools v.21.11` does not support the `abcg2` charge method (`-c abcg2`), which requires `AmberTools >= 24` — see [Using ABCG2 Charges](#using-abcg2-charges) below.
 
 ##### To Test, if doing via `git`
 
@@ -217,6 +218,37 @@ To get help and more information, type:
 ```bash
 ./run_acpype.py -h
 ```
+
+##### Using ABCG2 Charges
+
+Besides `gas`, `bcc` and `user`, `acpype` supports the `abcg2` charge method
+(**AM1-BCC-GAFF2**, [He et al., J. Chem. Theory Comput. 2025](https://pmc.ncbi.nlm.nih.gov/articles/PMC11948320/)).
+ABCG2 is a re-tuned set of bond-charge corrections layered on the same AM1-BCC
+machinery, parameterised specifically against `GAFF2` to improve hydration free
+energies.
+
+```bash
+./run_acpype.py -i tests/benzene.pdb -c abcg2 -a gaff2
+```
+
+This produces `benzene_abcg2_gaff2.mol2` (and the usual topology files) with the
+ABCG2 charges.
+
+**NB:**
+
+- `abcg2` requires **`AmberTools >= 24`**. The `AmberTools v.21.11` bundled with
+  the `pip`/`docker`/`conda install acpype` distributions does **not** support it
+  and will fail with _"Unknown charge method"_; `acpype` detects this and reports
+  that a newer `AmberTools` is needed. To use `abcg2`, install a recent
+  `AmberTools`, e.g. `conda install -c conda-forge ambertools`.
+- ABCG2 charges are derived and validated against `GAFF2` atom types, so they
+  should be used with `-a gaff2` (the default) or `-a amber2`. `acpype` will warn
+  if you combine `abcg2` with `-a gaff` or `-a amber`.
+
+> **Note:** ABCG2 support was implemented **agentically with [Claude Code](https://claude.com/claude-code)** (Anthropic, Claude Opus 4.8). The agent inspected the source, set up an ABCG2-capable `AmberTools` from conda-forge, empirically verified the antechamber behaviour, wrote the code and tests, and updated the documentation. The full session log and a summary of the changes are kept as separate files:
+>
+> - [`docs/abcg2/CONVERSATION_LOG.md`](docs/abcg2/CONVERSATION_LOG.md) — log of the Claude Code session (requests and actions taken).
+> - [`docs/abcg2/CHANGES.md`](docs/abcg2/CHANGES.md) — summary of the changes made.
 
 ##### To Install
 

@@ -709,7 +709,7 @@ class AbstractTopol(abc.ABC):
         To call Antechamber and execute it.
 
         Args:
-            chargeType ([str], optional): bcc, gas or user. Defaults to None/bcc.
+            chargeType ([str], optional): bcc, abcg2, gas or user. Defaults to None/bcc.
             atomType ([str], optional): gaff, amber, gaff2, amber2. Defaults to None/gaff2.
 
         Returns:
@@ -816,9 +816,11 @@ class AbstractTopol(abc.ABC):
                     RESP               resp     1  |  AM1-BCC           bcc     2
                     CM1                cm1      3  |  CM2               cm2     4
                     ESP (Kollman)      esp      5  |  Mulliken          mul     6
-                    Gasteiger          gas      7  |  Read in charge    rc      8
-                    Write out charge   wc       9  |  Delete Charge     dc     10
+                    Gasteiger          gas      7  |  ABCG2             abcg2   8
+                    Read in charge     rc       9  |  Write out charge  wc     10
+                    Delete Charge      dc      11  |
                     --------------------------------------------------------------
+                    (ABCG2 requires AmberTools >= 24; validated against GAFF2 atom types)
         """
         global pid
 
@@ -873,6 +875,11 @@ class AbstractTopol(abc.ABC):
         if os.path.exists(self.acMol2FileName):
             self.printMess("* Antechamber OK *")
         else:
+            if "abcg2" in ct and "Unknown charge method" in (self.acLog or ""):
+                self.printError(
+                    "'abcg2' charge method is not supported by this antechamber; "
+                    "it requires AmberTools >= 24. Update AmberTools to use ABCG2 charges."
+                )
             self.printErrorQuoted(self.acLog)
             return True
         return False
@@ -3307,6 +3314,11 @@ class ACTopol(AbstractTopol):
         self.chargeVal = chargeVal
         self.multiplicity = multiplicity
         self.atomType = atomType
+        if self.chargeType == "abcg2" and "2" not in self.atomType:
+            self.printWarn(
+                f"'abcg2' charges were derived and validated against GAFF2 atom types; "
+                f"'-a {self.atomType}' is not a validated combination, prefer '-a gaff2' (or 'amber2')"
+            )
         self.gaffDatfile = "gaff.dat"
         leapGaffFile = "leaprc.gaff"
         if "2" in self.atomType:

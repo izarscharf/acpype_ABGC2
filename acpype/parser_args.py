@@ -38,11 +38,11 @@ def get_option_parser():
     parser.add_argument(
         "-c",
         "--charge_method",
-        choices=["gas", "bcc", "user"],
+        choices=["gas", "bcc", "abcg2", "user"],
         action="store",
         default="bcc",
         dest="charge_method",
-        help="charge method: gas, bcc (default), user (user's charges in mol2 file)",
+        help="charge method: gas, bcc (default), abcg2 (AM1-BCC-GAFF2, requires AmberTools>=24 and -a gaff2/amber2), user (user's charges in mol2 file)",
     )
     parser.add_argument(
         "-n",

@@ -9,6 +9,17 @@ from acpype.topol import ACTopol
 from acpype.utils import _getoutput
 
 
+def _abcg2_supported():
+    """True if the available antechamber supports the 'abcg2' charge method (AmberTools >= 24)."""
+    return "abcg2" in _getoutput("antechamber -L").lower()
+
+
+abcg2_required = pytest.mark.skipif(
+    not _abcg2_supported(),
+    reason="antechamber does not support 'abcg2' (requires AmberTools >= 24)",
+)
+
+
 @pytest.mark.parametrize(
     ("issorted", "charge", "msg"),
     [
@@ -147,6 +158,31 @@ def test_sqm_tleap(janitor, capsys, ct, ft, msg):
     assert molecule.molTopol.atoms[-1].charge == approx(0.13)
     assert msg in captured.out
     janitor.append(molecule.absHomeDir)
+    janitor.append(molecule.tmpDir)
+
+
+@abcg2_required
+def test_abcg2(janitor, capsys):
+    # ABCG2 (AM1-BCC-GAFF2) charges, validated against GAFF2 atom types
+    molecule = ACTopol("benzene.pdb", chargeType="abcg2", atomType="gaff2", debug=True)
+    molecule.createACTopol()
+    molecule.createMolTopol()
+    captured = capsys.readouterr()
+    cmd = "-dr no -i 'benzene.mol2' -fi mol2 -o 'benzene_abcg2_gaff2.mol2' -fo mol2 -c abcg2 -nc 0 -m 1 -s 2 -df 2 -at gaff2"
+    assert cmd in captured.out
+    assert len(molecule.molTopol.atoms) == 12
+    assert molecule.molTopol.atoms[0].charge == approx(-0.112)
+    assert molecule.molTopol.atoms[-1].charge == approx(0.112)
+    janitor.append(molecule.absHomeDir)
+    janitor.append(molecule.tmpDir)
+
+
+@abcg2_required
+def test_abcg2_atomtype_warning(janitor, capsys):
+    # abcg2 with a non-GAFF2 atom type should warn about the unvalidated combination
+    molecule = ACTopol("benzene.pdb", chargeType="abcg2", atomType="gaff", debug=True)
+    captured = capsys.readouterr()
+    assert "not a validated combination" in captured.out
     janitor.append(molecule.tmpDir)
 
 

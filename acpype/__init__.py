@@ -35,6 +35,13 @@
             Chemistry 25, 9 (2004), 1157-1174.
             doi: `10.1002/jcc.20035 <https://doi.org/10.1002/jcc.20035>`_
 
+    For the ``abcg2`` charge method (AM1-BCC-GAFF2, requires AmberTools >= 24), please cite:
+
+        HE, X., MAN, V. H., GAO, J., and WANG, J. Development of an Improved Charge Model
+        (ABCG2) for the GAFF2 Force Field. Journal of Chemical Theory and Computation 21
+        (2025).
+        doi: `10.1021/acs.jctc.4c01586 <https://doi.org/10.1021/acs.jctc.4c01586>`_
+
     If you use this code, I am glad if you cite:
 
         SOUSA DA SILVA, A. W. & VRANKEN, W. F.

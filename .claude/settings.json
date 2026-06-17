@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(conda env *)",
+      "Bash(conda search *)",
+      "Bash(conda create *)",
+      "Bash(jobs -l)",
+      "Read(//home/izar-scharf/anaconda3/envs/**)",
+      "Bash(tail -40 /tmp/abcg2test/run.log)",
+      "Read(//tmp/abcg2test/**)",
+      "Bash(ls .github/workflows/)",
+      "Bash(grep -rln \"ambertools\\\\|AmberTools\\\\|antechamber\\\\|conda\\\\|pytest\" .github/workflows/)",
+      "Bash(cd /home/izar-scharf/.claude/projects/-home-izar-scharf-Documents-acpype-ABGC2/memory/)",
+      "Bash(cat MEMORY.md)"
+    ],
+    "additionalDirectories": [
+      "/home/izar-scharf/.claude/projects/-home-izar-scharf-Documents-acpype-ABGC2"
+    ]
+  }
+}
