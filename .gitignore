@@ -85,3 +85,7 @@ private.env
 .idea
 
 .vscode/
+
+# Claude:
+.claude
+CLAUDE.md 
