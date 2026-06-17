@@ -1,0 +1,21 @@
+# Reproducible conda environment for ACPYPE with a full, modern toolchain.
+#
+#   conda env create -f environment.yml
+#   conda activate acpype
+#
+# This pulls AmberTools (antechamber/tleap/parmchk2) and Open Babel from
+# conda-forge, so every charge method -- including `abcg2` (AM1-BCC-GAFF2,
+# requires AmberTools >= 24) -- works without any bundled binaries.
+#
+# Developers working from a clone can replace the `acpype` pip entry below with
+# an editable install of the checkout:  `pip install -e .`
+name: acpype
+channels:
+  - conda-forge
+dependencies:
+  - python >=3.9
+  - ambertools >=24
+  - openbabel
+  - pip
+  - pip:
+      - acpype

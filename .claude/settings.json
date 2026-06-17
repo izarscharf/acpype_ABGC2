@@ -11,7 +11,8 @@
       "Bash(ls .github/workflows/)",
       "Bash(grep -rln \"ambertools\\\\|AmberTools\\\\|antechamber\\\\|conda\\\\|pytest\" .github/workflows/)",
       "Bash(cd /home/izar-scharf/.claude/projects/-home-izar-scharf-Documents-acpype-ABGC2/memory/)",
-      "Bash(cat MEMORY.md)"
+      "Bash(cat MEMORY.md)",
+      "Bash(grep -nA40 \"requirements:\" recipe/meta.yaml)"
     ],
     "additionalDirectories": [
       "/home/izar-scharf/.claude/projects/-home-izar-scharf-Documents-acpype-ABGC2"

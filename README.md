@@ -103,45 +103,67 @@ format.
 However, if one wants `acpype` just to emulate _amb2gmx.pl_, one needs nothing
 at all but _[Python](http://www.python.org)_.
 
+`acpype` itself is a pure-Python package; its only runtime requirements are
+**ANTECHAMBER** (from `AmberTools`) and, for PDB/SMILES input, **Open Babel**.
+The recommended way to provide those is via `conda` from `conda-forge`, which gives
+you a current `AmberTools` (so every charge method, including `abcg2`, is available)
+without relying on any binaries shipped inside `acpype`.
+
 There are several ways of obtaining `acpype`:
 
-1. Via **[CONDA](https://anaconda.org/search?q=acpype)**:
+1. Via **[CONDA](https://anaconda.org/search?q=acpype)** _(recommended)_:
 
-   _(It should be wholesome, fully functional, all batteries included)_
+   _(Wholesome and fully functional: pulls `AmberTools` and `OpenBabel` from `conda-forge`.)_
 
    ```bash
    conda install -c conda-forge acpype
    ```
 
-2. Via **[PyPI](https://pypi.org/project/acpype/)**:
+2. Via the provided **`environment.yml`** _(reproducible, from a clone)_:
 
-   If you're using Linux with Intel processors then
+   This creates a self-contained env with `acpype` plus a modern `AmberTools`
+   (`>= 24`, i.e. `abcg2`-capable) and `OpenBabel` in one command:
 
    ```bash
-   pip install acpype
+   git clone https://github.com/alanwilter/acpype.git
+   cd acpype
+   conda env create -f environment.yml
+   conda activate acpype
    ```
 
-   is enough and you should have a complete solution. Oterwise ...
+   _(Developers can swap the `acpype` pip entry in `environment.yml` for an editable
+   install of the checkout: `pip install -e .`)_
 
-   _(Make sure you have `AmberTools` and, optionally but highly recommended, `OpenBabel`)_
+3. Via **[PyPI](https://pypi.org/project/acpype/)**:
+
+   `acpype` is pure Python, so bring `AmberTools` and `OpenBabel` yourself —
+   `conda` is the easiest source:
 
    ```bash
-   # You can use conda to get the needed 3rd parties for example
+   # get the 3rd-party tools (a current, abcg2-capable AmberTools)
    conda create -n acpype --channel conda-forge ambertools openbabel
+   conda activate acpype
 
-   # Or for Ubuntu 20:
-   apt-get install -y openbabel python3-openbabel libarpack++2-dev libgfortran5
+   # Or, on Ubuntu, for Open Babel only:
+   # apt-get install -y openbabel python3-openbabel libarpack++2-dev libgfortran5
 
    pip install acpype
 
-   # or if you feel daring
-
+   # or, if you feel daring
    pip install git+https://github.com/alanwilter/acpype.git
    ```
 
-   **NB:** If using OpenBabel python module, it's really **_CRITICAL_** to have it installed in the same `Python` environment of `acpype`.
+   **NB:** the PyPI/Docker artifacts still embed a stripped `AmberTools v.21.11`
+   (Linux/macOS **Intel** only) that `acpype` uses **only when no `antechamber` is
+   found on your `PATH`**. That fallback does **not** support `abcg2` (which needs
+   `AmberTools >= 24`) and may hit library-dependency issues, so for `abcg2`, Apple
+   Silicon, or simply an up-to-date toolchain, provide `AmberTools` via `conda` as
+   above.
 
-3. By downloading it via `git`:
+   **NB:** if using the OpenBabel python module, it's **_CRITICAL_** to have it
+   installed in the same `Python` environment as `acpype`.
+
+4. By downloading it via `git`:
 
    _(Make sure you have `AmberTools` and, optionally but highly recommended, `OpenBabel`)_
 
@@ -157,7 +179,7 @@ There are several ways of obtaining `acpype`:
 
    **NB:** Using this mode, CHARMM topology files will not be generated.
 
-4. Via **[Docker](https://hub.docker.com/repository/docker/acpype/acpype/)**:
+5. Via **[Docker](https://hub.docker.com/repository/docker/acpype/acpype/)**:
 
    _(It should be wholesome, fully functional, all batteries included)_
 
@@ -190,9 +212,9 @@ There are several ways of obtaining `acpype`:
 
 **NB:**
 
-- By installing via `conda` or using via `docker` you get `AmberTools v.21.11` and `OpenBabel v3.1.1`. Our `AmberTools v.21.11` is a stripped version from the original containing only the necessary binaries and libraries and comes with the `charmmgen` binary from `AmberTools17` in order to generate CHARMM topologies.
-- By installing via `pip` you get `AmberTools` (as described above) embedded. However, the included binaries may not work in your system (library dependencies issues) and with only provide binaries for Linux (Ubuntu20) and macOS (Intel).
-- The bundled `AmberTools v.21.11` does not support the `abcg2` charge method (`-c abcg2`), which requires `AmberTools >= 24` — see [Using ABCG2 Charges](#using-abcg2-charges) below.
+- Installing via `conda` (or the `environment.yml`) pulls `AmberTools` and `OpenBabel` from `conda-forge`, i.e. a current `AmberTools` — so all charge methods, including `abcg2`, work out of the box.
+- The `pip`/`docker` artifacts additionally **embed** a stripped `AmberTools v.21.11` (only `Linux` Ubuntu20 / `macOS` Intel), which comes with the `charmmgen` binary from `AmberTools17` for CHARMM topologies. `acpype` falls back to these embedded binaries **only when no `antechamber` is on your `PATH`**; they may have library-dependency issues and do **not** include `abcg2`.
+- The embedded `AmberTools v.21.11` does not support the `abcg2` charge method (`-c abcg2`), which requires `AmberTools >= 24` — see [Using ABCG2 Charges](#using-abcg2-charges) below.
 
 ##### To Test, if doing via `git`
 
