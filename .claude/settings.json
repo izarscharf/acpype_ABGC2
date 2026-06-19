@@ -12,7 +12,11 @@
       "Bash(grep -rln \"ambertools\\\\|AmberTools\\\\|antechamber\\\\|conda\\\\|pytest\" .github/workflows/)",
       "Bash(cd /home/izar-scharf/.claude/projects/-home-izar-scharf-Documents-acpype-ABGC2/memory/)",
       "Bash(cat MEMORY.md)",
-      "Bash(grep -nA40 \"requirements:\" recipe/meta.yaml)"
+      "Bash(grep -nA40 \"requirements:\" recipe/meta.yaml)",
+      "Bash(read p *)",
+      "Bash([ -f \"$p.md\" ])",
+      "Bash(grep -nA4 \"build-system\" pyproject.toml)",
+      "Bash(grep -n \"load-bearing\\\\|pip install -e .\\\\|upstream \\\\`acpype\\\\`\" Installation.md)"
     ],
     "additionalDirectories": [
       "/home/izar-scharf/.claude/projects/-home-izar-scharf-Documents-acpype-ABGC2"

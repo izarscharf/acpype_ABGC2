@@ -1,14 +1,20 @@
-# Reproducible conda environment for ACPYPE with a full, modern toolchain.
+# Reproducible conda environment for THIS fork of ACPYPE (with `abcg2` support).
 #
+# Run from the repository root (so the `-e .` pip entry installs THIS checkout):
+#
+#   git clone <this-repo> && cd acpype_ABGC2
 #   conda env create -f environment.yml
 #   conda activate acpype
 #
 # This pulls AmberTools (antechamber/tleap/parmchk2) and Open Babel from
-# conda-forge, so every charge method -- including `abcg2` (AM1-BCC-GAFF2,
-# requires AmberTools >= 24) -- works without any bundled binaries.
+# conda-forge -- so every charge method, including `abcg2` (AM1-BCC-GAFF2,
+# requires AmberTools >= 24), works without any bundled binaries -- and then
+# installs the local source as an editable package, so the `acpype` command
+# runs the fork's code (NOT the upstream PyPI build, which lacks `abcg2`).
 #
-# Developers working from a clone can replace the `acpype` pip entry below with
-# an editable install of the checkout:  `pip install -e .`
+# NB: `-e .` is resolved relative to the directory you run `conda env create`
+# from; run it from the repo root. To use the published upstream package
+# instead, replace `- -e .` below with `- acpype`.
 name: acpype
 channels:
   - conda-forge
@@ -18,4 +24,4 @@ dependencies:
   - openbabel
   - pip
   - pip:
-      - acpype
+      - -e .

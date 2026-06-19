@@ -59,32 +59,30 @@ conda config --set auto_activate_base false # don't auto-enter base on login
 
 ## 2. Clone and create the environment
 
-```bash
-git clone <this-repo-url> acpype
-cd acpype
+**Run `conda env create` from the repo root** — `environment.yml` installs the local
+checkout (`-e .`), so the `acpype` command ends up running *this* fork's code (with
+`abcg2`), not the upstream PyPI build.
 
-# Creates an env named 'acpype' with a modern AmberTools (>=24, abcg2-capable)
-# and Open Babel from conda-forge:
+```bash
+git clone <this-repo-url> acpype_ABGC2
+cd acpype_ABGC2
+
+# Creates an env named 'acpype' with a modern AmberTools (>=24, abcg2-capable) and
+# Open Babel from conda-forge, plus this checkout installed editable:
 conda env create -f environment.yml
 conda activate acpype
 ```
 
-## 3. Install THIS checkout (important)
+> If you instead created the env some other way (or used a plain `conda create ...
+> acpype openbabel` for just the tools), install the fork explicitly from the repo
+> root: `pip install -e .`. Symptom of having skipped this: `acpype -c abcg2` fails
+> with `invalid choice: 'abcg2' (choose from gas, bcc, user)` — that's the **upstream**
+> parser, i.e. you're running the wrong `acpype`.
+>
+> No-install alternative: run `./run_acpype.py ...` from the repo's top directory
+> (outside it you'd need `PYTHONPATH=/path/to/acpype_ABGC2`).
 
-`environment.yml` pip-installs `acpype` from PyPI, which is the **upstream** version
-**without** `abcg2`. Overlay this modified checkout so the `acpype` command runs the
-local code:
-
-```bash
-pip install -e .          # editable install of the current clone
-```
-
-(If you prefer not to install at all, you can instead run the local script directly
-**from the clone's top directory**: `./run_acpype.py ...`. Outside that directory
-you'd need `PYTHONPATH=/path/to/acpype`. The `pip install -e .` route is simpler
-because the `acpype` command then works from anywhere in the env.)
-
-## 4. Verify the toolchain
+## 3. Verify the toolchain
 
 ```bash
 # the modified acpype is on PATH:
@@ -101,7 +99,7 @@ If `antechamber -L` does **not** list `abcg2`, your env resolved an older
 `AmberTools`; recreate it with `conda env create -f environment.yml` (which pins
 `ambertools >=24`).
 
-## 5. Run
+## 4. Run
 
 ```bash
 acpype -i my_ligand.pdb -c abcg2 -a gaff2     # ABCG2 / GAFF2
@@ -115,7 +113,7 @@ Output lands in `<basename>.acpype/` in the current directory.
 long as they're on `PATH` (they are, once the env is active) — you do **not** need to
 set `AMBERHOME` or use the bundled binaries.
 
-## 6. Submitting as a batch job (SLURM example)
+## 5. Submitting as a batch job (SLURM example)
 
 `acpype` is a short serial job; the only compute-heavy step is the AM1 charge
 calculation (`sqm`), which is single-threaded. A modest allocation is plenty.
